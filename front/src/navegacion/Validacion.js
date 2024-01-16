@@ -3,7 +3,7 @@ import "../css/validacion.css";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-const URI = "http://localhost:5000/alert/";
+const URI = "http://localhost:3000/alert/";
 function Validacion() {
 
   const navigate = useNavigate();
