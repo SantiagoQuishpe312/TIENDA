@@ -3,7 +3,7 @@ import "../css/validacion.css";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-const URI = "http://localhost:3000/alert/";
+const URI = "http://localhost:5000/alert/";
 function Validacion() {
 
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ useEffect(() => {
                   <button className="btn-sal" style={{backgroundColor:"white", border:"none", color:"darkblue",marginTop:"7px" }}>{username + "     "}</button>
                   <div className="dropdown-content" style={{ textAlign: "left" }}>
   <button className="btnValidacion" onClick={(e) => cerrarS()}>
-  <button onClick={enviarPorCorreo}>Enviar productos por correo</button>
+
 
     <Link to="/" className="l" id="reload">
       SALIR

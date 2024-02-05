@@ -3,12 +3,16 @@ const mysql = require("mysql2");
 const bodyParser = require("body-parser");
 
 const app = express();
+
+
 const port = 5000;
 const cors = require("cors");
 app.use(cors());
 // Configuración de body-parser para analizar JSON en las solicitudes POST
 app.use(bodyParser.json());
-
+const server = app.listen(port, () => {
+  console.log(`Servidor iniciado en el puerto ${port}`);
+});
 // Configuración de la conexión a la base de datos
 const db = mysql.createConnection({
   host: "localhost",
@@ -24,7 +28,7 @@ db.connect((err) => {
   }
   console.log("Conexión a la base de datos establecida");
 });
-
+module.exports = { app, db, server};
 app.get("/alert", (req, res) => {
   const sql = " select * from producto where pro_stock<=5;";
   db.query(sql, (err, result) => {
@@ -421,6 +425,4 @@ app.get("/impresionFactura/informe-ventas/:inicio/:final", (req, res) => {
 });
 
 // Iniciar el servidor
-app.listen(port, () => {
-  console.log(`Servidor iniciado en el puerto ${port}`);
-});
+

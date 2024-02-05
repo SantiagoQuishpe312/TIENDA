@@ -109,11 +109,14 @@ const RegistroCliente = () => {
   //efecto para obtener al cliente por el ID
   useEffect(() => {
     document.title = "CLIENTES";
-    getClientes();
     if (id) {
       getClienteById();
+    } else {
+      getClientes();
     }
-  });
+  }, [id]);
+  
+  
 
   // Effect to reset the state when the "Agregar proveedores" modal is shown
   useEffect(() => {
@@ -122,21 +125,21 @@ const RegistroCliente = () => {
     }
   }, [showModal]);
 
-  const nuevoCliente = async (e) => {
+  let nuevoCliente = async (e) => {
     e.preventDefault();
     if (!verificarCedula(Cedula)) {
       alert("Cédula no válida");
       return;
     }
-    const dob = new Date(FecNacimiento);
-    const today = new Date();
+    let dob = new Date(FecNacimiento);
+    let today = new Date();
   
     if (dob > today) {
       alert('La fecha de nacimiento no es valida.');
       return;
     }
   
-    const age = today.getFullYear() - dob.getFullYear();
+    let age = today.getFullYear() - dob.getFullYear();
   
     if (today.getMonth() < dob.getMonth() || (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
       age--;
@@ -159,11 +162,14 @@ const RegistroCliente = () => {
         CLI_DIRECCION: Direccion,
         CLI_FECNACIMIENTO: FecNacimiento,
         CLI_ESTADO: 'Activo',
+
       });
+      
       setShowModal(false);
       getClientes();
     } catch (error) {
       console.error('Error al agregar nuevo cliente:', error);
+      
     }
   };
   
@@ -221,7 +227,6 @@ const RegistroCliente = () => {
             break;
           case "segundoNombre":
             setSegundoNombre(value);
-            console.log(inputName + "texto" + SegundoNombre);
             break;
           case "primerApellido":
             setPrimerApellido(value);
