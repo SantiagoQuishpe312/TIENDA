@@ -1,4 +1,4 @@
-/*import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
 import RegistroCliente from "./pages/registro-cliente.js";
 import RegistroProductos from "./pages/registro-productos";
@@ -60,8 +60,8 @@ function App() {
     </BrowserRouter>
   );
 }
-export default App;*/
- 
+export default App;
+ /*
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
 import AuthService from "./pages/AuthService";
@@ -126,3 +126,4 @@ function App() {
 }
 
 export default App;
+*/

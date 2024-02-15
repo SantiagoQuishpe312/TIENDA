@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-
+import AuthSingleton from "./ProveedorSingleton";
 const Login = () => {
   useEffect(() => {
     document.title = "LOGIN"
@@ -24,19 +24,19 @@ const Login = () => {
 
     // Aquí puedes realizar la validación de las credenciales
 
-    if (username === "admin" && password === "password") {
+    if ((username === "admin" && password === "password") || (username === "admin1" && password === "password1")) {
       setIsLoggedIn(true);
-      localStorage.setItem("username",username)
+      localStorage.setItem("username", username);
+      localStorage.setItem("role", username === "admin" ? "admin" : "admin1"); // Almacenar el rol
     } else {
       alert("Credenciales incorrectas. Inténtalo de nuevo.");
     }
   };
 
   if (isLoggedIn) {
-    // Si el usuario ha iniciado sesión, utiliza Navigate para redirigir a /registro-cliente
     return <Navigate to="/home" />;
   } else {
-    // Si el usuario aún no ha iniciado sesión, muestra el formulario de inicio de sesión
+    
     return (
       <div style={{ marginTop:"45px",display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "55px" }}>
         <h2>TIENDITA</h2>
