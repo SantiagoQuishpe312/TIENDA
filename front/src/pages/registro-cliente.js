@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { appObserver } from './appObserver';
 
 
 //URL PARA RECUPERAR LOS DATOS DE LA TABLA CLIENTE DE LA BASE DE DATOS
@@ -37,29 +38,29 @@ const RegistroCliente = () => {
       alert("Cédula no válida");
       return;
     }
-  
+
     const dob = new Date(FecNacimiento);
     const today = new Date();
-  
+
     if (dob > today) {
       alert('La fecha de nacimiento no es valida.');
       return;
     }
-  
+
     let age = today.getFullYear() - dob.getFullYear();
-  
+
     if (today.getMonth() < dob.getMonth() || (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
       age--;
     }
-  
+
     if (age < 18) {
       alert('El cliente debe tener al menos 18 años.');
       return;
     }
-  
+
     try {
       const idAux = localStorage.getItem("id");
-      await axios.put(URI + idAux, {
+      const response = await axios.put(URI + idAux, {
         CLI_CEDULA: Cedula,
         CLI_PRIMERAPELLIDO: PrimerApellido,
         CLI_SEGUNDOAPELLIDO: SegundoApellido,
@@ -71,34 +72,39 @@ const RegistroCliente = () => {
         CLI_FECNACIMIENTO: FecNacimiento,
         CLI_ESTADO: Estado,
       });
-  
+      const clienteActualizadoData = response.data;
+
+      // Notificamos a los observadores sobre la actualización del cliente
+      appObserver.notify({ action: 'update', data: clienteActualizadoData });
       setEditShowModal(false);
       getClientes();
+
     } catch (error) {
       console.error("Error al Actualizar Datos del Cliente:", error);
     }
-  };  
+
+  };
 
   function verificarCedula(cedula) {
-    if (typeof(cedula) == 'string' && cedula.length == 10 && /^\d+$/.test(cedula)) {
+    if (typeof (cedula) == 'string' && cedula.length == 10 && /^\d+$/.test(cedula)) {
       var digitos = cedula.split('').map(Number);
       var codigo_provincia = digitos[0] * 10 + digitos[1];
-  
+
       //if (codigo_provincia >= 1 && (codigo_provincia <= 24 || codigo_provincia == 30) && digitos[2] < 6) {
-  
+
       if (codigo_provincia >= 1 && (codigo_provincia <= 24 || codigo_provincia == 30)) {
         var digito_verificador = digitos.pop();
-  
+
         var digito_calculado = digitos.reduce(
           function (valorPrevio, valorActual, indice) {
             return valorPrevio - (valorActual * (2 - indice % 2)) % 9 - (valorActual == 9) * 9;
           }, 1000) % 10;
         return digito_calculado === digito_verificador;
-  }
+      }
     }
     return false;
   }
-  
+
   const resetState = () => {
     setCedula("");
     setPrimerNombre("");
@@ -115,8 +121,41 @@ const RegistroCliente = () => {
       getClientes();
     }
   }, [id]);
-  
-  
+
+
+  //Uso del patron observer para notificar a los observadores sobre los cambios en los clientes
+  useEffect(() => {
+    const handleClientesChange = (notification) => {
+      // Desestructurar la notificación para obtener la acción y los datos
+      const { action, data } = notification;
+
+      // Determinar el mensaje en función de la acción
+      let message;
+      switch (action) {
+        case 'add':
+          message = `Nuevo cliente agregado: ${data}`;
+          break;
+        case 'update':
+          message = `Cliente actualizado: ${data}`;
+          break;
+        default:
+          message = 'Acción desconocida';
+      }
+
+      // Mostrar el mensaje en consola
+      alert(message);
+    };
+
+
+    appObserver.subscribe(handleClientesChange);
+
+    // Retorna una función para cancelar la suscripción al desmontar el componente
+    return () => {
+      appObserver.unsubscribe(handleClientesChange);
+    };
+  }, []);
+
+
 
   // Effect to reset the state when the "Agregar proveedores" modal is shown
   useEffect(() => {
@@ -133,25 +172,25 @@ const RegistroCliente = () => {
     }
     let dob = new Date(FecNacimiento);
     let today = new Date();
-  
+
     if (dob > today) {
       alert('La fecha de nacimiento no es valida.');
       return;
     }
-  
+
     let age = today.getFullYear() - dob.getFullYear();
-  
+
     if (today.getMonth() < dob.getMonth() || (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
       age--;
     }
-  
+
     if (age < 18) {
       alert('El cliente debe tener al menos 18 años.');
       return;
     }
-  
+
     try {
-      await axios.post(URI, {
+      const response = await axios.post(URI, {
         CLI_CEDULA: Cedula,
         CLI_PRIMERAPELLIDO: PrimerApellido,
         CLI_SEGUNDOAPELLIDO: SegundoApellido,
@@ -164,16 +203,18 @@ const RegistroCliente = () => {
         CLI_ESTADO: 'Activo',
 
       });
-      
+      const nuevoClienteData = response.data;
+      appObserver.notify({ action: 'add', data: nuevoClienteData });
       setShowModal(false);
       getClientes();
     } catch (error) {
       console.error('Error al agregar nuevo cliente:', error);
-      
+
     }
+
   };
-  
-  
+
+
   // Funcion que valida el formato de correo electrónico
   const validarCorreoElectronico = (email) => {
     // Expresión regular para validar el formato de correo electrónico
@@ -273,7 +314,7 @@ const RegistroCliente = () => {
         setFecNacimiento(formattedDate);
         console.log(res.data[0].CLI_FECNACIMIENTO);
         setEstado(res.data[0].CLI_ESTADO);
-        
+
       } else {
         // Si no se encuentra ningún cliente con el id proporcionado
         console.log("No se encontró ningún cliente con el ID: " + idAux);
@@ -363,8 +404,8 @@ const RegistroCliente = () => {
                 {/* Mostrar solo la fecha en formato año-mes-día */}
                 {cliente.CLI_FECNACIMIENTO
                   ? new Date(cliente.CLI_FECNACIMIENTO).toLocaleDateString(
-                      "es-ES"
-                    )
+                    "es-ES"
+                  )
                   : ""}
               </td>
               <td> {cliente.CLI_ESTADO} </td>
@@ -674,7 +715,7 @@ const RegistroCliente = () => {
                   name="FecNacimiento"
                   value={FecNacimiento}
                   onChange={(e) => setFecNacimiento(e.target.value)}
-                  
+
                 />
               </div>
               <button className="custom-button" type="submit">
