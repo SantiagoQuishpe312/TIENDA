@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes, Outlet } from "react-router-dom";
-import RegistroCliente from "./pages/registro-cliente.js";
+import RegistroCliente from "./test/registro-cliente.js";
 import RegistroProductos from "./pages/registro-productos";
 import RegistroProveedor from "./pages/registro-proveedor.js";
 import RegistroFactura from "./pages/registro-factura.js";
@@ -46,7 +46,7 @@ function App() {
           <Route path="/" element={<Login onLogin={handleLogin} />} />
         )}
         <Route path="/registro-productos" element={<RegistroProductos />} />
-        <Route path="/registro-clientes" element={<RegistroCliente />} />
+        <Route path="/registro-clientes" element={<RegistroCliente/>}/>  
         <Route path="/registro-proveedor" element={<RegistroProveedor />} />
         <Route path="/registro-factura" element={<RegistroFactura />} />
         <Route path="/facturacion" element={<Factura />} />

@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { appObserver } from './appObserver';
+import { appObserver } from '../pages/appObserver';
 
 
 //URL PARA RECUPERAR LOS DATOS DE LA TABLA CLIENTE DE LA BASE DE DATOS

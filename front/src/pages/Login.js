@@ -22,8 +22,6 @@ const Login = () => {
   const handleLogin = (event) => {
     event.preventDefault();
 
-    // Aquí puedes realizar la validación de las credenciales
-
     if ((username === "admin" && password === "password") || (username === "admin1" && password === "password1")) {
       setIsLoggedIn(true);
       localStorage.setItem("username", username);
